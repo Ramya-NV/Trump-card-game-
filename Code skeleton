@@ -1,0 +1,100 @@
+import random
+import requests
+
+# Generate a random number between 1 and 151 to use as the Pokemon ID number
+pokemon_id = random.randint(1, 151)
+
+# Using the Pokemon API get a Pokemon based on its ID number
+url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_id}/"
+response = requests.get(url)
+data = response.json()
+
+# Create a dictionary that contains the returned Pokemon's name, id, height and weight
+pokemon = {
+    "name": data["name"],
+    "id": data["id"],
+    "height": data["height"],
+    "weight": data["weight"]
+}
+
+# Get a random Pokemon for the player and another for their opponent
+player_pokemon = pokemon
+opponent_pokemon_id = random.randint(1, 151)
+opponent_url = f"https://pokeapi.co/api/v2/pokemon/{opponent_pokemon_id}/"
+opponent_response = requests.get(opponent_url)
+opponent_data = opponent_response.json()
+opponent_pokemon = {
+    "name": opponent_data["name"],
+    "id": opponent_data["id"],
+    "height": opponent_data["height"],
+    "weight": opponent_data["weight"]
+}
+
+# Ask the user which stat they want to use (id, height or weight)
+stat = input("Which stat would you like to use for comparison? (id, height, weight) ")
+
+# Compare the player's and opponent's Pokemon on the chosen stat to decide who wins
+if player_pokemon[stat] > opponent_pokemon[stat]:
+    print("You win!")
+elif player_pokemon[stat] < opponent_pokemon[stat]:
+    print("Your opponent wins.")
+else:
+    print("It's a tie.")
+
+
+
+#To allow the player to select multiple random Pokemon and decide which one to use:
+
+pokemon_pool = []
+for i in range(5):
+    pokemon_id = random.randint(1, 151)
+    url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_id}/"
+    response = requests.get(url)
+    data = response.json()
+    pokemon = {
+        "name": data["name"],
+        "id": data["id"],
+        "height": data["height"],
+        "weight": data["weight"]
+    }
+    pokemon_pool.append(pokemon)
+
+for i, poke in enumerate(pokemon_pool):
+    print(f"{i+1}. {poke['name']}")
+
+choice = int(input("Which Pokemon would you like to use? Choose a number from above: "))
+player_pokemon = pokemon_pool[choice-1]
+
+#To play multiple rounds and record the outcome of each round, you can use a variable to keep track of the number of rounds won by each player, and a loop to play multiple rounds.
+
+player_wins = 0
+opponent_wins = 0
+rounds = int(input("How many rounds would you like to play? "))
+for i in range(rounds):
+    opponent_pokemon_id = random.randint(1, 151)
+    opponent_url = f"https://pokeapi.co/api/v2/pokemon/{opponent_pokemon_id}/"
+    opponent_response = requests.get(opponent_url)
+    opponent_data = opponent_response.json()
+    opponent_pokemon = {
+        "name": opponent_data["name"],
+        "id": opponent_data["id"],
+        "height": opponent_data["height"],
+        "weight": opponent_data["weight"]
+    }
+    stat = input("Which stat would you like to use for comparison? (id, height, weight) ")
+
+    if player_pokemon[stat] > opponent_pokemon[stat]:
+        print("You win this round!")
+        player_wins += 1
+    elif player_pokemon[stat] < opponent_pokemon[stat]:
+        print("Your opponent wins this round.")
+        opponent_wins += 1
+    else:
+        print("This round is a tie.")
+
+if player_wins > opponent_wins:
+    print("You win the game!")
+elif player_wins < opponent_wins:
+    print("Your opponent wins the game.")
+else:
+    print("The game is a tie.")
